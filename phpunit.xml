@@ -9,7 +9,7 @@
          processIsolation="false"
          stopOnFailure="false">
     <testsuites>
-        <testsuite name="Stanley Stella Test Suite">
+        <testsuite name="Supplier Stock Info Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>

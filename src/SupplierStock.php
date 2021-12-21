@@ -1,8 +1,8 @@
 <?php
 
-namespace StanleyStella;
+namespace SupplierStockInfo;
 
-use StanleyStella\Resources\Suppliers\StanleyStella;
+use SupplierStockInfo\Resources\Suppliers\StanleyStella;
 
 class SupplierStock
 {
@@ -10,20 +10,34 @@ class SupplierStock
         'stanley-stella' => StanleyStella::class
     ];
 
+    /**
+     * @var array
+     */
+    private array $items = [];
+
+    /**
+     * @var array
+     */
     private array $pickedSuppliers;
 
     /**
      * @throws \Exception
      */
-    public function suppliers(array $suppliersData): static
+    public function suppliers(array $suppliers): static
     {
-        foreach($suppliersData as $suppliersDatum) {
-            if(!isset(self::AVAILABLE_SUPPLIERS[$suppliersDatum['name']])) {
-                throw new \Exception();
+        if(empty($suppliers)) {
+            throw new \Exception("Please provide at least one supplier");
+        }
+
+        foreach($suppliers as $supplier) {
+            if(!isset(self::AVAILABLE_SUPPLIERS[$supplier['name']])) {
+                throw new \Exception($supplier['name']. " - this supplier is not supported");
             }
 
-            $supplierClass = self::AVAILABLE_SUPPLIERS[$suppliersDatum['name']];
-            $this->pickedSuppliers[$suppliersDatum['name']] = new $supplierClass($suppliersDatum['token']);
+            $supplierClass = self::AVAILABLE_SUPPLIERS[$supplier['name']];
+            $this->pickedSuppliers[$supplier['name']] = new $supplierClass(
+                $supplier['token']
+            );
         }
 
         return $this;
@@ -32,24 +46,38 @@ class SupplierStock
     /**
      * @throws \Exception
      */
-    public function items(array $items): array
+    public function items(array $items): static
     {
-        $data = [];
+        if(empty($items)) {
+            throw new \Exception("Please provide at least one item");
+        }
 
-        foreach($this->pickedSuppliers as $supplierName => $supplier) {
-            foreach($items as $item) {
+        foreach($items as $key => $item) {
+            $this->items[$key] = [
+                'identifier' => $item['identifier'],
+                'stocks' => []
+            ];
+
+            foreach($this->pickedSuppliers as $supplierName => $supplier) {
                 $supplier->setQuery($item);
                 $supplier->initConnection();
-                $results = $supplier->results();
+                $result = $supplier->results();
 
-                if(!$results['success']) {
-                    throw new \Exception($results['results']);
-                }
-
-                $data[$supplierName] = $results['results'];
+                $this->items[$key]['stocks'][] = array_merge(
+                    $result,
+                    ['supplier_name' => $supplierName]
+                );
             }
         }
 
-        return $data;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function get(): array
+    {
+        return $this->items;
     }
 }

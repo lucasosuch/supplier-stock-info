@@ -1,5 +1,5 @@
 {
-    "name": "lqasz/stanley-stella-php",
+    "name": "lqasz/supplier-stock-info",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -19,14 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "StanleyStella\\": "src"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "RandomPassword\\PasswordServiceProvider"
-            ]
+            "SupplierStockInfo\\": "src"
         }
     }
 }

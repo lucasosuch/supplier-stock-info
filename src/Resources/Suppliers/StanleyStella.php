@@ -1,35 +1,33 @@
 <?php
 
-namespace StanleyStella\Resources\Suppliers;
+namespace SupplierStockInfo\Resources\Suppliers;
 
 class StanleyStella extends Supplier
 {
     const URL = "https://webservices.stanleystella.com/ODatav4/StockOverview";
-    private bool $isInventory = false;
+    const IDENTIFIER = "SKU";
 
-    public function setQuery(array $query)
+    /**
+     * @param array $query
+     * @return void
+     * @throws \Exception
+     */
+    public function setQuery(array $query): void
     {
-        foreach($query as $key => $value) {
-            if($key == 'Is_Inventory' && $value) {
-                $this->isInventory = true;
-                continue;
-            }
-
-            $this->query .= $key." eq '". $value."'";
+        if(empty($query)) {
+            throw new \Exception("Please provide a items for search");
         }
 
-        $this->query = rawurlencode($this->query);
+        $this->query = rawurlencode(self::IDENTIFIER." eq '". $query['identifier']."'");
     }
 
-    public function initConnection()
+    /**
+     * @return void
+     * @throws \Exception
+     */
+    public function initConnection(): void
     {
-        $url = self::URL;
-
-        if(!empty($this->query)) {
-            $url .= '?$filter='. $this->query;
-        }
-
-        $this->curlHandle = curl_init($url);
+        $this->curlHandle = curl_init(self::URL .'?$filter='. $this->query);
         curl_setopt($this->curlHandle, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($this->curlHandle, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($this->curlHandle, CURLOPT_RETURNTRANSFER, 1);
@@ -39,21 +37,20 @@ class StanleyStella extends Supplier
         curl_setopt($this->curlHandle, CURLOPT_HTTPAUTH, CURLAUTH_DIGEST);
     }
 
-    protected function validateResult($result)
+    /**
+     * @param $result
+     * @return array
+     */
+    protected function convertResult($result): array
     {
         $result = json_decode($result, true);
 
-        if(!$this->isInventory) {
-            return $result;
-        }
-
-
         foreach($result['value'] as $iter =>$item) {
-            if(empty($item['Is_Inventory'])) {
-                unset($result['value'][$iter]);
+            if(!empty($item['Is_Inventory'])) {
+                return $result['value'][$iter];
             }
         }
 
-        return $result;
+        return [];
     }
 }

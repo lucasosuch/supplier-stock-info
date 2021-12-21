@@ -1,10 +1,14 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use StanleyStella\SupplierStock;
+use SupplierStockInfo\SupplierStock;
 
 class SupplierStockTest extends TestCase
 {
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testIfSupplierExists()
     {
         $this->expectException(Exception::class);
@@ -18,6 +22,10 @@ class SupplierStockTest extends TestCase
         ]);
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function testIfConnectionCanBeEstablished()
     {
         $this->expectException(Exception::class);
@@ -26,13 +34,12 @@ class SupplierStockTest extends TestCase
         $supplierStock->suppliers([
             [
                 'name' => 'stanley-stella',
-                'token' => 'token'
+                'token' => 'token',
             ]
         ])->items([
             [
-                'SKU' => 'STTU787C6021S',
-                'Is_Inventory' => true
+                'identifier' => '123'
             ]
-        ]);
+        ])->get();
     }
 }

@@ -1,39 +1,68 @@
 <?php
 
-namespace StanleyStella\Resources\Suppliers;
+namespace SupplierStockInfo\Resources\Suppliers;
 
 abstract class Supplier
 {
+    /**
+     * @var string
+     */
     protected string $token;
-    protected string $query;
+
+    /**
+     * @var string
+     */
+    protected string $query = "";
+
+    /**
+     * @var \CurlHandle
+     */
     protected \CurlHandle $curlHandle;
 
+    /**
+     * @param $token
+     * @throws \Exception
+     */
     public function __construct($token)
     {
-        $this->query = "";
+        if(empty($token)) {
+            throw new \Exception("Please provide a valid token");
+        }
+
         $this->token = $token;
     }
 
+    /**
+     * @return array
+     * @throws \Exception
+     */
     public function results() : array
     {
-        $success = true;
         $result = curl_exec($this->curlHandle);
 
         if (empty($result)) {
-            $success = false;
             $httpCode = curl_getinfo($this->curlHandle , CURLINFO_HTTP_CODE);
-            $result = $httpCode ." ". curl_error($this->curlHandle);
+            throw new \Exception($httpCode. " | ". curl_error($this->curlHandle));
         }
 
         curl_close($this->curlHandle);
-
-        return [
-            "success" => $success,
-            "results" => $this->validateResult($result)
-        ];
+        return $this->convertResult($result);
     }
 
-    public abstract function initConnection();
-    public abstract function setQuery(array $query);
-    protected abstract function validateResult($result);
+    /**
+     * @return void
+     */
+    public abstract function initConnection(): void;
+
+    /**
+     * @param array $query
+     * @return void
+     */
+    public abstract function setQuery(array $query): void;
+
+    /**
+     * @param $result
+     * @return array
+     */
+    protected abstract function convertResult($result): array;
 }
