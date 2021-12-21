@@ -1,1 +1,1 @@
-# stanley-stella-php
+# supplier-stock-info

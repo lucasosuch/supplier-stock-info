@@ -1,5 +1,6 @@
 {
     "name": "lqasz/supplier-stock-info",
+    "description": "Supplier stock info package.",
     "type": "library",
     "license": "MIT",
     "authors": [
