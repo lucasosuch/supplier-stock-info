@@ -4,8 +4,8 @@ namespace SupplierStockInfo\Resources\Suppliers;
 
 class StanleyStella extends Supplier
 {
-    const URL = "https://webservices.stanleystella.com/ODatav4/StockOverview";
-    const IDENTIFIER = "SKU";
+    public const URL = "https://webservices.stanleystella.com/ODatav4/StockOverview";
+    public const IDENTIFIER = "SKU";
 
     /**
      * @param array $query
@@ -14,7 +14,7 @@ class StanleyStella extends Supplier
      */
     public function setQuery(array $query): void
     {
-        if(empty($query)) {
+        if (empty($query)) {
             throw new \Exception("Please provide a items for search");
         }
 
@@ -45,8 +45,8 @@ class StanleyStella extends Supplier
     {
         $result = json_decode($result, true);
 
-        foreach($result['value'] as $iter =>$item) {
-            if(!empty($item['Is_Inventory'])) {
+        foreach ($result['value'] as $iter =>$item) {
+            if (!empty($item['Is_Inventory'])) {
                 return $result['value'][$iter];
             }
         }

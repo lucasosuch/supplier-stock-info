@@ -22,5 +22,8 @@
         "psr-4": {
             "SupplierStockInfo\\": "src"
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
     }
 }

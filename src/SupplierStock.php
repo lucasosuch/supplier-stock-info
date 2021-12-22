@@ -6,7 +6,7 @@ use SupplierStockInfo\Resources\Suppliers\StanleyStella;
 
 class SupplierStock
 {
-    const AVAILABLE_SUPPLIERS = [
+    public const AVAILABLE_SUPPLIERS = [
         'stanley-stella' => StanleyStella::class
     ];
 
@@ -25,12 +25,12 @@ class SupplierStock
      */
     public function suppliers(array $suppliers): static
     {
-        if(empty($suppliers)) {
+        if (empty($suppliers)) {
             throw new \Exception("Please provide at least one supplier");
         }
 
-        foreach($suppliers as $supplier) {
-            if(!isset(self::AVAILABLE_SUPPLIERS[$supplier['name']])) {
+        foreach ($suppliers as $supplier) {
+            if (!isset(self::AVAILABLE_SUPPLIERS[$supplier['name']])) {
                 throw new \Exception($supplier['name']. " - this supplier is not supported");
             }
 
@@ -48,17 +48,17 @@ class SupplierStock
      */
     public function items(array $items): static
     {
-        if(empty($items)) {
+        if (empty($items)) {
             throw new \Exception("Please provide at least one item");
         }
 
-        foreach($items as $key => $item) {
+        foreach ($items as $key => $item) {
             $this->items[$key] = [
                 'identifier' => $item['identifier'],
                 'stocks' => []
             ];
 
-            foreach($this->pickedSuppliers as $supplierName => $supplier) {
+            foreach ($this->pickedSuppliers as $supplierName => $supplier) {
                 $supplier->setQuery($item);
                 $supplier->initConnection();
                 $result = $supplier->results();

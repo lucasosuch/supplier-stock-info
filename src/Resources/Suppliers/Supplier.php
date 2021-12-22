@@ -25,7 +25,7 @@ abstract class Supplier
      */
     public function __construct($token)
     {
-        if(empty($token)) {
+        if (empty($token)) {
             throw new \Exception("Please provide a valid token");
         }
 
@@ -36,12 +36,12 @@ abstract class Supplier
      * @return array
      * @throws \Exception
      */
-    public function results() : array
+    public function results(): array
     {
         $result = curl_exec($this->curlHandle);
 
         if (empty($result)) {
-            $httpCode = curl_getinfo($this->curlHandle , CURLINFO_HTTP_CODE);
+            $httpCode = curl_getinfo($this->curlHandle, CURLINFO_HTTP_CODE);
             throw new \Exception($httpCode. " | ". curl_error($this->curlHandle));
         }
 
@@ -52,17 +52,17 @@ abstract class Supplier
     /**
      * @return void
      */
-    public abstract function initConnection(): void;
+    abstract public function initConnection(): void;
 
     /**
      * @param array $query
      * @return void
      */
-    public abstract function setQuery(array $query): void;
+    abstract public function setQuery(array $query): void;
 
     /**
      * @param $result
      * @return array
      */
-    protected abstract function convertResult($result): array;
+    abstract protected function convertResult($result): array;
 }
