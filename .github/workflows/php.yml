@@ -32,5 +32,8 @@ jobs:
     - name: Run test suite
       run: composer run-script test
 
+    - name: Install php-cs-fixer
+      run: composer require --working-dir=tools/php-cs-fixer friendsofphp/php-cs-fixer
+
     - name: Beautify code base
       run: tools/php-cs-fixer/vendor/bin/php-cs-fixer fix src
